@@ -1,9 +1,33 @@
 const { Telegraf } = require('telegraf');
 
-// Environment variable theke bot token load korbe (Token gopon thakbe)
+// Environment variable theke bot token load korbe
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// Message ba caption theke custom emoji ID extract korar logic
+// 1. /start command ebong Keyboard Button add kora
+bot.start(async (ctx) => {
+  await ctx.reply(
+    `👋 **Welcome!** Ei bot-er maddhome apni jekono Custom ba Animated Emoji-r Unique ID ber korte parben.\n\n👉 **Niyom:** Nicher button e click korun ba direct apnar custom emoji guli ei chat-e send korun!`, 
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        keyboard: [
+          [{ text: '💡 Kivabe ID ber korbo?' }] // Keyboard button
+        ],
+        resize_keyboard: true,
+        one_time_keyboard: false
+      }
+    }
+  );
+});
+
+// 2. Keyboard button-er text handle korar jonno
+bot.hears('💡 Kivabe ID ber korbo?', async (ctx) => {
+  await ctx.reply(
+    `Khub sohoj! 🎉\n\nApni je emoji ba sticker pack-er ID ber korte chan, shegula ekta ekta kore ei chat-e send ba forward korun. Ami sathe sathe tar **Custom Emoji ID** reply kore dibo.`
+  );
+});
+
+// 3. Message ba caption theke custom emoji ID extract korar logic
 bot.on('message', async (ctx) => {
   try {
     const message = ctx.message;
@@ -14,7 +38,7 @@ bot.on('message', async (ctx) => {
       for (const entity of entities) {
         if (entity.type === 'custom_emoji') {
           // Emoji-r unique ID ti reply kore dibe
-          await ctx.reply(`Custom Emoji ID:\n\`${entity.custom_emoji_id}\``, { 
+          await ctx.reply(`✨ Custom Emoji ID:\n\`${entity.custom_emoji_id}\``, { 
             parse_mode: 'Markdown' 
           });
         }
