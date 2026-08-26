@@ -1,55 +1,51 @@
 const { Telegraf } = require('telegraf');
 
-// Environment variable theke bot token load korbe
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// 1. /start command ebong Keyboard Button add kora
 bot.start(async (ctx) => {
   await ctx.reply(
-    `👋 **Welcome!** Ei bot-er maddhome apni jekono Custom ba Animated Emoji-r Unique ID ber korte parben.\n\n👉 **Niyom:** Nicher button e click korun ba direct apnar custom emoji guli ei chat-e send korun!`, 
-    {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        keyboard: [
-          [{ text: '💡 Kivabe ID ber korbo?' }] // Keyboard button
-        ],
-        resize_keyboard: true,
-        one_time_keyboard: false
-      }
-    }
+    `👋 Welcome! Ekhon apni jekono Custom Emoji ba Sticker pathan, ami sathe sathe tar ID ber kore dibo!`, 
+    { parse_mode: 'Markdown' }
   );
 });
 
-// 2. Keyboard button-er text handle korar jonno
-bot.hears('💡 Kivabe ID ber korbo?', async (ctx) => {
-  await ctx.reply(
-    `Khub sohoj! 🎉\n\nApni je emoji ba sticker pack-er ID ber korte chan, shegula ekta ekta kore ei chat-e send ba forward korun. Ami sathe sathe tar **Custom Emoji ID** reply kore dibo.`
-  );
-});
-
-// 3. Message ba caption theke custom emoji ID extract korar logic
 bot.on('message', async (ctx) => {
   try {
     const message = ctx.message;
-    // Message ba media caption-er entities check kora
+    let found = false;
+
+    // 1. Check custom emoji in text
     const entities = message.entities || message.caption_entities;
-    
     if (entities && entities.length > 0) {
       for (const entity of entities) {
         if (entity.type === 'custom_emoji') {
-          // Emoji-r unique ID ti reply kore dibe
-          await ctx.reply(`✨ Custom Emoji ID:\n\`${entity.custom_emoji_id}\``, { 
+          found = true;
+          await ctx.reply(`✨ **Custom Emoji ID:**\n\`${entity.custom_emoji_id}\``, { 
             parse_mode: 'Markdown' 
           });
         }
       }
     }
+
+    // 2. Check if it's sent as a Sticker (jodi sticker pack-er moto hoy)
+    if (message.sticker) {
+      found = true;
+      await ctx.reply(`📦 **Sticker File ID:**\n\`${message.sticker.file_id}\`\n\n*(Sticker Unique ID: \`${message.sticker.file_unique_id}\`)*`, { 
+        parse_mode: 'Markdown' 
+      });
+    }
+
+    // 3. Jodi kisu-i na mile
+    if (!found) {
+      await ctx.reply(`⚠️ Eta normal emoji ba ekhane kono custom emoji ID paoni. Ektu thikvave custom emoji ba sticker pathiye abar try korun!`);
+    }
+
   } catch (error) {
     console.error('Error handling message:', error);
+    await ctx.reply('Kono ekta error hoyeche.');
   }
 });
 
-// Vercel Serverless Function handler (Webhook)
 module.exports = async (req, res) => {
   if (req.method === 'POST') {
     try {
@@ -60,6 +56,6 @@ module.exports = async (req, res) => {
       res.status(500).send('Internal Server Error');
     }
   } else {
-    res.status(200).send('Telegram Bot is running on Vercel!');
+    res.status(200).send('Telegram Bot is running!');
   }
 };
