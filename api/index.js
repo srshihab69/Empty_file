@@ -3,46 +3,26 @@ const { Telegraf } = require('telegraf');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.start(async (ctx) => {
-  await ctx.reply(
-    `👋 Welcome! Ekhon apni jekono Custom Emoji ba Sticker pathan, ami sathe sathe tar ID ber kore dibo!`, 
-    { parse_mode: 'Markdown' }
-  );
+  await ctx.reply(`👋 Debug mode on! Ekhon apnar oi emoji ba sticker guli pathan, bot tar raw data (JSON) dekhiye debe.`);
 });
 
 bot.on('message', async (ctx) => {
   try {
-    const message = ctx.message;
-    let found = false;
-
-    // 1. Check custom emoji in text
-    const entities = message.entities || message.caption_entities;
-    if (entities && entities.length > 0) {
-      for (const entity of entities) {
-        if (entity.type === 'custom_emoji') {
-          found = true;
-          await ctx.reply(`✨ **Custom Emoji ID:**\n\`${entity.custom_emoji_id}\``, { 
-            parse_mode: 'Markdown' 
-          });
-        }
-      }
-    }
-
-    // 2. Check if it's sent as a Sticker (jodi sticker pack-er moto hoy)
-    if (message.sticker) {
-      found = true;
-      await ctx.reply(`📦 **Sticker File ID:**\n\`${message.sticker.file_id}\`\n\n*(Sticker Unique ID: \`${message.sticker.file_unique_id}\`)*`, { 
+    // Telegram theke je message-ti asche, tar shob data JSON format-e convert korbe
+    const rawData = JSON.stringify(ctx.message, null, 2);
+    
+    // Telegram message length 4096 character-er beshi hole kete choto kore dibe
+    if (rawData.length > 4000) {
+      await ctx.reply(`Message data onek boro! Message type: ${Object.keys(ctx.message).join(', ')}`);
+    } else {
+      await ctx.reply(`🔍 **Raw Message Data:**\n\`\`\`json\n${rawData}\n\`\`\`, { 
         parse_mode: 'Markdown' 
       });
     }
 
-    // 3. Jodi kisu-i na mile
-    if (!found) {
-      await ctx.reply(`⚠️ Eta normal emoji ba ekhane kono custom emoji ID paoni. Ektu thikvave custom emoji ba sticker pathiye abar try korun!`);
-    }
-
   } catch (error) {
     console.error('Error handling message:', error);
-    await ctx.reply('Kono ekta error hoyeche.');
+    await ctx.reply(`Error: ${error.message}`);
   }
 });
 
