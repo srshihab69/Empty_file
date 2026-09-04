@@ -20,7 +20,7 @@ const mainKeyboard = {
     parse_mode: 'HTML'
 };
 
-// Webhook handling (No more bot.on inside here)
+// Webhook handling - Optimized for Vercel Serverless
 app.post(`/api/webhook`, async (req, res) => {
     try {
         const msg = req.body.message;
@@ -28,15 +28,16 @@ app.post(`/api/webhook`, async (req, res) => {
 
         const chatId = msg.chat.id;
 
-        // 1. /start command
+        // 1. /start command (Pic Style UI)
         if (msg.text === '/start') {
             const name = msg.from.first_name;
-            const welcomeText = `<b>Hello ${name}!</b>\n` +
-                                `Welcome to Information Extractor bot. Select a button below to start.`;
+            const welcomeText = `<b>Hello ${name}! 👋</b>\n\n` +
+                                `<blockquote>Welcome to <b>ID Checker Bot</b>. Use the buttons below to get information about any user. ❞</blockquote>`;
+            
             await bot.sendMessage(chatId, welcomeText, mainKeyboard);
         }
 
-        // 2. User Info Logic (Shared User)
+        // 2. User Info Logic (Shared User Response - Pic Style)
         else if (msg.user_shared) {
             const userId = msg.user_shared.user_id;
             const header = `<blockquote>🔍 Shared User Info ❞</blockquote>\n\n`;
@@ -44,7 +45,6 @@ app.post(`/api/webhook`, async (req, res) => {
             let inlineBtn = null;
 
             try {
-                // Fetch info with timeout and await
                 const user = await bot.getChat(userId);
                 details = `<blockquote>` +
                           `🆔 ID: <code>${user.id}</code>\n` +
@@ -59,6 +59,7 @@ app.post(`/api/webhook`, async (req, res) => {
                     ]]
                 };
             } catch (e) {
+                // If details hidden by privacy, still show the searching box
                 details = `<blockquote>` +
                           `🆔 ID: <code>${userId}</code>\n` +
                           `👤 Name: <code>Unknown</code>\n` +
@@ -68,7 +69,7 @@ app.post(`/api/webhook`, async (req, res) => {
             await bot.sendMessage(chatId, header + details, { parse_mode: 'HTML', reply_markup: inlineBtn });
         }
 
-        // 3. My Info Logic
+        // 3. My Info Logic (Pic Style)
         else if (msg.text === '🆔 My Info') {
             const u = msg.from;
             const header = `<blockquote>🆔 Your ID Information ❞</blockquote>\n\n`;
@@ -78,10 +79,11 @@ app.post(`/api/webhook`, async (req, res) => {
                             `🏷️ Username: <code>${u.username ? '@' + u.username : 'No username'}</code>\n` +
                             `⭐ Premium: ${u.is_premium ? '✅ Yes' : '❌ No'}` +
                             `</blockquote>`;
+            
             await bot.sendMessage(chatId, header + details, { parse_mode: 'HTML' });
         }
 
-        // 4. Support Logic
+        // 4. Support Logic (Pic Style)
         else if (msg.text === '☎️ Support') {
             const supportText = `<blockquote>🛡️ Need help or found a bug? ❞</blockquote>\n\n` +
                                 `<blockquote>⚡ Contact my developer: <b>@srshihab69</b></blockquote>`;
@@ -94,12 +96,12 @@ app.post(`/api/webhook`, async (req, res) => {
         }
 
     } catch (err) {
-        console.error("Critical Error:", err);
+        console.error("Vercel Webhook Error:", err);
     }
 
-    // কাজ শেষ হওয়ার পর একদম শেষে রেসপন্স যাবে
+    // Vercel-কে রেসপন্স পাঠানো (সব কাজ শেষ হওয়ার পর)
     res.status(200).send('OK');
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+app.listen(PORT, () => console.log(`ID Checker Bot is Active`));
