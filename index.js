@@ -28,10 +28,10 @@ app.post(`/api/webhook`, async (req, res) => {
 
         const chatId = msg.chat.id;
 
-        // 1. /start command (Pic Style UI)
+        // 1. /start command (Perfect Pic Style)
         if (msg.text === '/start') {
             const name = msg.from.first_name;
-            const welcomeText = `<b>Hello ${name}! 👋</b>\n\n` +
+            const welcomeText = `<blockquote>👋 Hello, ${name}! ❞</blockquote>\n\n` +
                                 `<blockquote>Welcome to <b>ID Checker Bot</b>. Use the buttons below to get information about any user. ❞</blockquote>`;
             
             await bot.sendMessage(chatId, welcomeText, mainKeyboard);
@@ -59,7 +59,6 @@ app.post(`/api/webhook`, async (req, res) => {
                     ]]
                 };
             } catch (e) {
-                // If details hidden by privacy, still show the searching box
                 details = `<blockquote>` +
                           `🆔 ID: <code>${userId}</code>\n` +
                           `👤 Name: <code>Unknown</code>\n` +
@@ -99,7 +98,7 @@ app.post(`/api/webhook`, async (req, res) => {
         console.error("Vercel Webhook Error:", err);
     }
 
-    // Vercel-কে রেসপন্স পাঠানো (সব কাজ শেষ হওয়ার পর)
+    // Vercel-কে রেসপন্স পাঠানো
     res.status(200).send('OK');
 });
 
