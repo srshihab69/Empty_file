@@ -32,7 +32,7 @@ app.post(`/api/webhook`, async (req, res) => {
         if (msg.text === '/start') {
             const name = msg.from.first_name;
             const welcomeText = `<blockquote>👋 Hello, ${name}! ❞</blockquote>\n\n` +
-                                `<blockquote>Welcome to <b>ID Checker Bot</b>. Use the buttons below to get information about any user. ❞</blockquote>`;
+                                `<blockquote>Welcome to <b>ID Checker Bot</b>. Use the buttons below to get information about any user.</blockquote>`;
             
             await bot.sendMessage(chatId, welcomeText, mainKeyboard);
         }
@@ -40,7 +40,7 @@ app.post(`/api/webhook`, async (req, res) => {
         // 2. User Info Logic (Shared User Response - Pic Style)
         else if (msg.user_shared) {
             const userId = msg.user_shared.user_id;
-            const header = `<blockquote>🔍 Shared User Info ❞</blockquote>\n\n`;
+            const header = `<blockquote>🔍 Shared User Info</blockquote>\n\n`;
             let details = "";
             let inlineBtn = null;
 
@@ -84,7 +84,7 @@ app.post(`/api/webhook`, async (req, res) => {
 
         // 4. Support Logic (Updated with New Button)
         else if (msg.text === '☎️ Support') {
-            const supportText = `<blockquote>🛡️ Need help or found a bug? ❞</blockquote>\n\n` +
+            const supportText = `<blockquote>🛡️ Need help or found a bug?</blockquote>\n\n` +
                                 `<blockquote>⚡ Contact my developer: <b>@srshihab69</b></blockquote>`;
             const supportBtn = {
                 inline_keyboard: [
