@@ -82,14 +82,19 @@ app.post(`/api/webhook`, async (req, res) => {
             await bot.sendMessage(chatId, header + details, { parse_mode: 'HTML' });
         }
 
-        // 4. Support Logic (Pic Style)
+        // 4. Support Logic (Updated with New Button)
         else if (msg.text === '☎️ Support') {
             const supportText = `<blockquote>🛡️ Need help or found a bug? ❞</blockquote>\n\n` +
                                 `<blockquote>⚡ Contact my developer: <b>@srshihab69</b></blockquote>`;
             const supportBtn = {
-                inline_keyboard: [[
-                    { text: '👨‍💻 Developer', url: 'https://t.me/srshihab69' }
-                ]]
+                inline_keyboard: [
+                    [
+                        { text: '👨‍💻 Developer', url: 'https://t.me/srshihab69' }
+                    ],
+                    [
+                        { text: '🤖 Get Any ID Finder Bot', url: 'https://t.me/AnyIDFinderBot' }
+                    ]
+                ]
             };
             await bot.sendMessage(chatId, supportText, { parse_mode: 'HTML', reply_markup: supportBtn });
         }
@@ -98,7 +103,7 @@ app.post(`/api/webhook`, async (req, res) => {
         console.error("Vercel Webhook Error:", err);
     }
 
-    // Vercel-কে রেসপন্স পাঠানো
+    // Response to Vercel
     res.status(200).send('OK');
 });
 
